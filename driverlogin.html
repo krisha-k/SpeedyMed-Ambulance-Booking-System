@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Driver Login</h2>
+        <form id="loginForm">
+            <label for="username">Username or Email:</label>
+            <input type="text" id="username" placeholder="username or email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="password" required>
+            <button type="submit">Login</button>
+            <p>Don't have an account? <a href="driversignup.html">Sign up</a></p>
+        <p><a href="forgot-password.html">Forgot Password?</a></p>
+        </form>
+        <!-- Success message container -->
+        <div id="loginSuccessMessage" style="display: none;">
+            <h2>Login Successful!</h2>
+            <p>Welcome back to Speedy!</p>
+            <a href="drivermap.html"><button id="startRideButton">Start Ride</button></a>
+        </div>
+    </div>
+
+    <script src="appp.js"></script>
+</body>
+</html>

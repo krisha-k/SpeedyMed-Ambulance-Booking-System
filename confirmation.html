@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: url("background.png");
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .details {
+            margin-bottom: 20px;
+        }
+
+        .details p {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0069d9;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .confirmation {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .driver-details {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .driver-details p {
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .call-btn {
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #28a745;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .call-btn:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>Booking Confirmation</header>
+        <div class="details" id="bookingDetails">
+            <!-- Booking details will be inserted here -->
+        </div>
+        <button class="btn" id="bookBtn">Book Ambulance</button>
+
+        <!-- Loading Indicator -->
+        <div class="loading" id="loading" style="display: none;">
+            <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading...">
+            <p>Processing your booking...</p>
+        </div>
+
+        <!-- Confirmation and Driver Details -->
+        <div class="confirmation" id="confirmation" style="display: none;">
+            <h2 style="color: #28a745;">Booking Accepted!</h2>
+            <div class="driver-details">
+                <p><strong>Driver Name:</strong> K. Kumar</p>
+                <p><strong>Phone Number:</strong> 9762346776</p>
+                <p><strong>Ambulance No:</strong> TN20G 0985</p>
+            </div>
+            <p style="margin-top: 20px; color: #555;">If any queries, call your driver.</p>
+            <button class="call-btn" id="callBtn">Call Now</button>
+        </div>
+    </div>
+
+    <script>
+        // Retrieve booking details from localStorage
+        const bookingDetails = JSON.parse(localStorage.getItem('bookingDetails'));
+
+        // Reference to HTML elements
+        const bookingDetailsDiv = document.getElementById('bookingDetails');
+        const bookBtn = document.getElementById('bookBtn');
+        const loadingDiv = document.getElementById('loading');
+        const confirmationDiv = document.getElementById('confirmation');
+        const callBtn = document.getElementById('callBtn');
+
+        // Function to display booking details
+        function displayBookingDetails() {
+            if (!bookingDetails) {
+                bookingDetailsDiv.innerHTML = '<p>No booking details found. Please book an ambulance first.</p>';
+                bookBtn.style.display = 'none';
+                return;
+            }
+
+            bookingDetailsDiv.innerHTML = `
+                <p><strong>Name:</strong> ${bookingDetails.name}</p>
+                <p><strong>Phone Number:</strong> ${bookingDetails.phone}</p>
+                <p><strong>Date:</strong> ${bookingDetails.date}</p>
+                <p><strong>Time:</strong> ${bookingDetails.time}</p>
+            `;
+        }
+
+        // Function to handle booking process
+        function handleBooking() {
+            // Hide the book button and show loading
+            bookBtn.style.display = 'none';
+            loadingDiv.style.display = 'block';
+
+            // Simulate a delay (e.g., 3 seconds)
+            setTimeout(() => {
+                loadingDiv.style.display = 'none';
+                confirmationDiv.style.display = 'block';
+            }, 3000); // 3000 milliseconds = 3 seconds
+        }
+
+        // Function to handle "Call Now" button
+        function handleCall() {
+            if (bookingDetails && bookingDetails.phone) {
+                // Attempt to call the driver's phone number
+                window.location.href = `tel:9762346776`;
+            } else {
+                alert('Driver phone number is not available.');
+            }
+        }
+
+        // Initialize the page
+        displayBookingDetails();
+
+        // Event listeners
+        bookBtn.addEventListener('click', handleBooking);
+        callBtn.addEventListener('click', handleCall);
+    </script>
+</body>
+</html>

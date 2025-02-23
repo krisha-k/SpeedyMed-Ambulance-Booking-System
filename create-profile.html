@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Profile - Speedy</title>
+    <link rel="stylesheet" href="driver.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create Your Profile</h1>
+        <form id="profileForm">
+            <label for="driverName">Driver Name:</label>
+            <input type="text" id="driverName" required>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" required>
+
+            <label for="ambulanceNumber">Ambulance Number:</label>
+            <input type="text" id="ambulanceNumber" required>
+
+            <label for="photo">Upload Photo:</label>
+            <input type="file" id="photo" accept="image/*" required>
+
+            <label for="license">Upload Driving License:</label>
+            <input type="file" id="license" accept="application/pdf, image/*" required>
+
+            <a href="view-profile.html"><button type="submit">Upload</button></a>
+        </form>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

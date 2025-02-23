@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambulance Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Map container */
+        #map {
+            position: relative;
+            width: 100vw;
+            height: 80vh;
+            background: url("mapp.png.jpg");
+            background-size: cover;
+        }
+
+        /* SRM Ramapuram */
+        .location.start {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: red;
+            border-radius: 50%;
+            top: 70%;
+            left: 10%;
+        }
+
+        /* Government Hospital */
+        .location.end {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: green;
+            border-radius: 50%;
+            top: 10%;
+            left: 80%;
+        }
+
+        /* Ambulance marker */
+        .ambulance {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url("ambulance.png") no-repeat center center;
+            background-size: contain;
+        }
+
+        /* Arrival message box */
+        #arrivalMessageBox {
+            display: none;
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 2px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #arrivalMessageBox button {
+            margin: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #arrivalMessageBox button.no {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Ambulance Tracker</h2>
+    <div id="map">
+        <!-- Starting and ending locations -->
+        <div class="location start"></div>
+        <div class="location end"></div>
+
+        <!-- Ambulance marker -->
+        <div class="ambulance" id="ambulanceMarker"></div>
+    </div>
+
+    <!-- Arrival message box -->
+    <div id="arrivalMessageBox">
+        <h3>Your driver K. Kumar has arrived</h3>
+        <a href="yes.html"><button class="yes">Yes, he arrived</button></a>
+        <a href="no.html"><button class="no">I can't find him</button></a>
+    </div>
+
+    <script>
+        // Coordinates for the ambulance's movement
+        const pathCoordinates = [
+            { x: 10, y: 70 },  // SRM Ramapuram
+            { x: 20, y: 60 },
+            { x: 30, y: 50 },
+            { x: 40, y: 40 },
+            { x: 50, y: 30 },
+            { x: 60, y: 20 },
+            { x: 70, y: 15 },
+            { x: 80, y: 10 }   // Government Hospital
+        ];
+
+        // Access the ambulance marker and path elements
+        const ambulanceMarker = document.getElementById('ambulanceMarker');
+        const arrivalMessageBox = document.getElementById('arrivalMessageBox');
+
+        let step = 0;
+
+        // Function to set the ambulance position
+        function setAmbulancePosition(coords) {
+            ambulanceMarker.style.left = coords.x + 'vw';
+            ambulanceMarker.style.top = coords.y + 'vh';
+        }
+
+        // Simulate movement step by step
+        function moveAmbulance() {
+            if (step < pathCoordinates.length) {
+                // Move the ambulance
+                setAmbulancePosition(pathCoordinates[step]);
+                step++;
+            } else {
+                // Ambulance has reached its destination
+                arrivalMessageBox.style.display = 'block';
+                clearInterval(movement);  // Stop the movement
+            }
+        }
+
+        // Move the ambulance every 1 second
+        const movement = setInterval(moveAmbulance, 1000);
+
+        // Buttons
+        document.querySelector('.yes').addEventListener('click', () => {
+            alert("You have confirmed that the driver has arrived.");
+            arrivalMessageBox.style.display = 'none';
+        });
+
+        document.querySelector('.no').addEventListener('click', () => {
+            alert("You reported that you couldn't find the driver.");
+            arrivalMessageBox.style.display = 'none';
+        });
+
+    </script>
+
+</body>
+</html>
+
+
+
+       

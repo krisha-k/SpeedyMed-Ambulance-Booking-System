@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advance Booking</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("background.png");
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: rgba(154, 193, 238, 0.7);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+
+        .box {
+            width: 100%;
+        }
+
+        .form-box header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        .field input[type="text"],
+        .field input[type="date"],
+        .field input[type="time"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box form-box">
+            <header>Advance Booking</header>
+            <form id="bookingForm">
+                <div class="field input">
+                    <label for="username">Name</label>
+                    <input type="text" name="username" placeholder="Enter your name" id="username" autocomplete="off" required>
+                </div>
+                <div class="field input">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="text" name="phoneNumber" placeholder="Enter your phone number" id="phoneNumber" autocomplete="off" required>
+                </div>
+                <div class="field input">
+                    <label for="date">Date</label>
+                    <input type="date" name="date" id="date" autocomplete="off" required>
+                </div>
+                <div class="field input">
+                    <label for="time">Time</label>
+                    <input type="time" name="time" id="time" autocomplete="off" required>
+                </div>
+                <div class="field">
+                    <input type="submit" class="btn" value="Proceed to Confirmation">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Handle form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            // Retrieve form data
+            const name = document.getElementById('username').value.trim();
+            const phone = document.getElementById('phoneNumber').value.trim();
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+
+            // Basic validation (optional, as HTML5 validation is already in place)
+            if (!name || !phone || !date || !time) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // Save data to localStorage
+            const bookingDetails = {
+                name: name,
+                phone: phone,
+                date: date,
+                time: time
+            };
+
+            localStorage.setItem('bookingDetails', JSON.stringify(bookingDetails));
+
+            // Redirect to confirmation page
+            window.location.href = 'confirmation.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { width: 100%; height: 100vh; }
+        #arrival-message {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white; padding: 20px; border: 2px solid #444;
+            border-radius: 8px; display: none; z-index: 1000; text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #arrival-message button {
+            margin: 10px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;
+            font-size: 16px;
+        }
+        #yes-arrived { background-color: #4CAF50; color: white; }
+        #no-found { background-color: #f44336; color: white; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="arrival-message">
+        <p><strong>Your driver has arrived!</strong></p>
+        <a href="yes.html"><button id="yes-arrived" type="button">Yes, arrived!</button></a>
+        <a href="no.html"><button id="no-found" type="button">No, I can't find</button></a>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([13.017844, 80.154037], 13);
+        
+        // Set up the tile layer (this part works even if it's file://)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        // Define the ambulance icon
+        var ambulanceIcon = L.icon({
+            iconUrl: "ambulance.png", // Use a local file for the icon
+            iconSize: [50, 50],
+            iconAnchor: [25, 25],
+        });
+
+        // Place the ambulance marker
+        var ambulanceMarker = L.marker([13.017844, 80.154037], { icon: ambulanceIcon }).addTo(map);
+
+        // For routing, this will not work under file:// but is kept for reference
+        var routingControl;
+        var isRouting = false;
+
+        // Try to add the geocoder (note this will also not work under file://)
+        var geocoder = L.Control.geocoder({
+            defaultMarkGeocode: false,
+            placeholder: 'Search for pickup...'
+        }).on('markgeocode', function (e) {
+            var destination = e.geocode.center;
+            console.log("Destination coordinates:", destination); // Log coordinates
+            setRoute([13.017844, 80.154037], [destination.lat, destination.lng]);
+        }).addTo(map);
+
+        function setRoute(start, destination) {
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            routingControl = L.Routing.control({
+                waypoints: [
+                    L.latLng(start[0], start[1]),
+                    L.latLng(destination[0], destination[1])
+                ],
+                lineOptions: {
+                    styles: [{ color: 'blue', opacity: 0.6, weight: 4 }]
+                },
+                addWaypoints: false,
+                routeWhileDragging: false,
+                fitSelectedRoutes: true,
+                show: false,
+                geocoder: L.Control.Geocoder.nominatim(),
+            }).on('routesfound', function (e) {
+                var routes = e.routes;
+                if (routes.length > 0) {
+                    var coords = routes[0].coordinates;
+                    moveAmbulance(coords);
+                } else {
+                    console.error("No routes found");
+                }
+            }).addTo(map);
+        }
+
+        function moveAmbulance(coords) {
+            if (isRouting) return;
+            isRouting = true;
+
+            var index = 0;
+
+            function animateMarker() {
+                if (index >= coords.length) {
+                    isRouting = false;
+                    showArrivalMessage();
+                    return;
+                }
+                ambulanceMarker.setLatLng([coords[index].lat, coords[index].lng]);
+                index++;
+                setTimeout(animateMarker, 50);
+            }
+
+            animateMarker();
+        }
+
+        function showArrivalMessage() {
+            var messageDiv = document.getElementById('arrival-message');
+            messageDiv.style.display = 'block';
+        }
+
+        document.getElementById('yes-arrived').addEventListener('click', function () {
+            alert("Thank you for confirming your arrival.");
+            document.getElementById('arrival-message').style.display = 'none';
+        });
+
+        document.getElementById('no-found').addEventListener('click', function () {
+            alert("We're sorry you couldn't find your driver. Please try again.");
+            document.getElementById('arrival-message').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

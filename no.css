@@ -1,0 +1,22 @@
+.driver-info {
+    border: 1px solid #444; /* Border around the box */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Space inside the box */
+    margin-top: 10px; /* Space above the box */
+    background-color: #f9f9f9; /* Light background color */
+    text-align: center; /* Center the text */
+}
+
+.contact-btn {
+    margin-top: 10px; /* Space above the button */
+    padding: 10px 10px; /* Button padding */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    background-color: #007bff; /* Button color */
+    color: white; /* Button text color */
+    cursor: pointer; /* Pointer on hover */
+}
+
+.contact-btn:hover {
+    background-color: #0056b3; /* Darker color on hover */
+}

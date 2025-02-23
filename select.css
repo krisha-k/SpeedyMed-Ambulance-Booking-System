@@ -1,0 +1,67 @@
+/* Body styling with a gradient background */
+body {
+    font-family: 'Andika', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: url("background.png");
+    background-size: cover;
+}
+
+/* Select box with glassmorphism effect */
+.select_box {
+    text-align: center;
+    padding: 30px;
+    width: 350px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Heading with a stylish color and shadow */
+.select_box h3 {
+    font-size: 2rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Flex container for buttons with some spacing */
+.buttons_container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Innovative button design */
+.select_btn {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #ff6a00, #ee0979);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* Hover effect: grow button and change gradient */
+.select_btn:hover {
+    transform: scale(1.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #ff9966, #ff5e62);
+}
+
+/* Additional hover effect: slightly rotate the buttons */
+.select_btn:hover {
+    transform: scale(1.15) rotate(2deg);
+}
+

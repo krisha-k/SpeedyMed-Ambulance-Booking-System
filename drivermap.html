@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { width: 100%; height: 100vh; }
+        .ride-details {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .ride-details button {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .ride-details button:hover {
+            background-color: #0056b3;
+        }
+        .ride-details .cancel-btn {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS and Routing Machine -->
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        const map = L.map('map').setView([13.0827, 80.2707], 12);  // Center on Chennai
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        const greenIcon = L.icon({
+            iconUrl: "location.png",
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+        });
+
+        // Define customers with specific pickup and drop locations
+        const customers = [
+            { name: 'mithra', pickup: 'Ramapuram', drop: 'GH Hospital', lat: 13.0245, lng: 80.2036 },
+            { name: 'pavithra', pickup: 'chrompet', drop: 'Kauvery Hospital', lat: 13.076, lng: 80.258 },
+        ];
+
+        let activeRide = null;
+        let routingControl = null;
+
+        function showRidePopup(customer) {
+            return `
+                <div class="ride-details">
+                    <p><strong>Customer Name:</strong> ${customer.name}</p>
+                    <p><strong>Pickup:</strong> ${customer.pickup}</p>
+                    <p><strong>Drop:</strong> ${customer.drop}</p>
+                    <button onclick="acceptRide('${customer.name}', ${customer.lat}, ${customer.lng})">Accept Ride</button>
+                </div>
+            `;
+        }
+
+        function acceptRide(customerName, pickupLat, pickupLng) {
+            activeRide = { name: customerName, pickupLat, pickupLng };
+            const activeMarker = customerMarkers[customerName];
+            activeMarker.setPopupContent(`
+                <div class="ride-details">
+                    <p>Ride accepted for ${customerName}</p>
+                    <button onclick="startRide()">Start Ride</button>
+                    <button class="cancel-btn" onclick="cancelRide()">Cancel Ride</button>
+                </div>
+            `);
+        }
+
+        function startRide() {
+            if (!activeRide) return alert("No active ride!");
+
+            // Assume driver's current location is Chennai center for demo (can be replaced with live GPS data)
+            const driverLatLng = [13.0827, 80.2707];  // Starting point (Chennai)
+            const pickupLatLng = [activeRide.pickupLat, activeRide.pickupLng];  // Customer's pickup location
+
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            routingControl = L.Routing.control({
+                waypoints: [
+                    L.latLng(driverLatLng[0], driverLatLng[1]),  // Driver's current location
+                    L.latLng(pickupLatLng[0], pickupLatLng[1])   // Customer's pickup location
+                ],
+                routeWhileDragging: false,
+                lineOptions: {
+                    styles: [{ color: 'blue', opacity: 0.7, weight: 5 }]
+                },
+                addWaypoints: false,
+            }).addTo(map);
+
+            routingControl.on('routesfound', function(e) {
+                const route = e.routes[0];
+                alert(`Route found! Distance: ${route.summary.totalDistance / 1000} km, Time: ${route.summary.totalTime / 60} minutes.`);
+            });
+        }
+
+        function cancelRide() {
+            if (activeRide) {
+                const marker = customerMarkers[activeRide.name];
+                marker.setPopupContent(showRidePopup(marker.customerData));
+                activeRide = null;
+            }
+            if (routingControl) {
+                map.removeControl(routingControl);
+                routingControl = null;
+            }
+            alert("Ride canceled.");
+        }
+
+        const customerMarkers = {};
+
+        // Add markers for customers
+        customers.slice(0, 10).forEach(customer => {
+            const marker = L.marker([customer.lat, customer.lng], { icon: greenIcon })
+                .addTo(map)
+                .bindPopup(showRidePopup(customer));
+
+            customerMarkers[customer.name] = marker;
+            marker.customerData = customer;
+        });
+    </script>
+
+</body>
+</html>

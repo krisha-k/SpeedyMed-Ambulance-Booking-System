@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Ambulance</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            display: none;
+        }
+        #ambulanceList {
+            margin-top: 20px;
+            display: none;
+        }
+        #arrivalBox {
+            display: none;
+            background-color: white;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 20px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        #arrivalBox h3 {
+            margin: 0;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Book Ambulance</h1>
+
+<div id="locationDetails">
+    <p><strong>Latitude:</strong> <span id="latitude">--</span></p>
+    <p><strong>Longitude:</strong> <span id="longitude">--</span></p>
+</div>
+
+<button id="getLocationBtn">Book by Current Location</button>
+<button id="bookAmbulanceBtn" style="display:none;">Book Ambulance</button>
+
+<div id="ambulanceList"></div>
+<div id="map"></div>
+
+<div id="arrivalBox">
+    <h3 id="arrivalMessage"></h3>
+    <a href="yes.html"><button id="arrivedBtn">Yes, Arrived!</button></a>
+    <a href="no.html"><button id="notFoundBtn">I Can't Find It</button></a>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+<script>
+    const getLocationBtn = document.getElementById('getLocationBtn');
+    const bookAmbulanceBtn = document.getElementById('bookAmbulanceBtn');
+    const latitudeElem = document.getElementById('latitude');
+    const longitudeElem = document.getElementById('longitude');
+    const mapDiv = document.getElementById('map');
+    const ambulanceListDiv = document.getElementById('ambulanceList');
+    const arrivalBox = document.getElementById('arrivalBox');
+    const arrivalMessage = document.getElementById('arrivalMessage');
+    let map, userLat, userLng;
+
+    function initializeMap(lat, lng) {
+        mapDiv.style.display = 'block';
+        if (!map) {
+            map = L.map('map').setView([lat, lng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        } else {
+            map.setView([lat, lng], 13);
+        }
+
+        // Add a marker for the user's location
+        L.marker([lat, lng]).addTo(map)
+            .bindPopup('You are here!')
+            .openPopup();
+    }
+
+    function showPosition(position) {
+        userLat = position.coords.latitude;
+        userLng = position.coords.longitude;
+
+        latitudeElem.textContent = userLat.toFixed(6);
+        longitudeElem.textContent = userLng.toFixed(6);
+
+        // Save to localStorage
+        localStorage.setItem('latitude', userLat.toFixed(6));
+        localStorage.setItem('longitude', userLng.toFixed(6));
+
+        initializeMap(userLat, userLng);
+        bookAmbulanceBtn.style.display = 'inline-block'; // Show the book button
+    }
+
+    function showError() {
+        alert("Unable to retrieve your location. Please try again.");
+    }
+
+    getLocationBtn.addEventListener('click', () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    });
+
+    bookAmbulanceBtn.addEventListener('click', () => {
+        showAmbulanceOptions();
+    });
+
+    function showAmbulanceOptions() {
+        // Simulated ambulance data
+        const ambulances = [
+            { number: "TN20G 8962", eta: "5 minutes" },
+            { number: "TN20G 1234", eta: "7 minutes" },
+            { number: "TN20G 5678", eta: "3 minutes" },
+        ];
+
+        ambulanceListDiv.innerHTML = "<h3>Select an Ambulance:</h3>";
+        ambulances.forEach(ambulance => {
+            const button = document.createElement("button");
+            button.textContent = `Ambulance No: ${ambulance.number} - Arriving in ${ambulance.eta}`;
+            button.onclick = () => bookAmbulance(ambulance);
+            ambulanceListDiv.appendChild(button);
+        });
+        ambulanceListDiv.style.display = 'block';
+    }
+
+    function bookAmbulance(ambulance) {
+        alert(`You selected ${ambulance.number}. Tracking ambulance...`);
+        ambulanceListDiv.style.display = 'none';
+
+        // Simulate ambulance arrival
+        setTimeout(() => {
+            displayArrivalMessage(ambulance);
+        }, parseInt(ambulance.eta) * 1000); // Convert minutes to milliseconds
+    }
+
+    function displayArrivalMessage(ambulance) {
+        arrivalMessage.textContent = `Driver arrived! Ambulance No: ${ambulance.number}`;
+        arrivalBox.style.display = 'block';
+
+        document.getElementById('arrivedBtn').addEventListener('click', () => {
+            alert("Thank you for confirming! Have a safe journey.");
+            window.location.href = 'index.html'; // Redirect to the main page
+        });
+
+        document.getElementById('notFoundBtn').addEventListener('click', () => {
+            alert("Please check around or call the driver for assistance.");
+        });
+    }
+</script>
+
+</body>
+</html>
+
